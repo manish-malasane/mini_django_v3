@@ -8,6 +8,7 @@ from jobs.models import Portal, JobDescription, Applicant, JobTitle
 
 # TODO  - write an API endpoint to get list of portals (.../jobs/portal_details)
 
+
 def get_portal_details(request):
     portals = Portal.objects.order_by("id")
     # how to get URL associated with django-view
@@ -25,12 +26,14 @@ def get_portal_details(request):
 
 # TODO  - write an API endpoint to get description of 1 job (.../jobs/job_detail/job_id)
 
+
 def get_detail_job_desc(request, job_id):
     foo = get_object_or_404(JobDescription, pk=job_id)
     return render(request, "jobs/job_description.html", {"job_desc": foo})
 
 
 # TODO  - write an API endpoint to get list of applicants (.../jobs/applicants_details)
+
 
 def get_applicants(request):
     applicants = []
@@ -50,6 +53,7 @@ def get_applicant_details(request, id_):
 
 # TODO  - write an API endpoint to get list of titles (.../jobs/jobtitles)
 
+
 def get_titles(request):
     titles = []
     result = JobTitle.objects.order_by("id")
@@ -57,5 +61,3 @@ def get_titles(request):
     for i in result:
         titles.append(i.title)
     return JsonResponse(titles, safe=False)
-
-
