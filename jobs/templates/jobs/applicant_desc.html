@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Details</title>
+</head>
+<body>
+{% if appli_desc %}
+<h1> Applicant Description ID :- {{appli_desc.id}}</h1>
+<h2> Applicant Name </h2>
+{{appli_desc.name}}
+<h2>Applicant Applied for Jobs</h2>
+{{appli_desc.applied_for}}
+<h2>Applicant Last Seen</h2>
+{{appli_desc.last_updated}}
+{% else %}
+<h2>No details available for applicant ID {{appli_desc.id}}</h2>
+{% endif %}
+</body>
+</html>
