@@ -26,4 +26,5 @@ urlpatterns = [
     ),
     path("job_titles/", views.get_titles, name="job_titles"),
     path("portals/", views.Portals.as_view(), name="portals"),
+    path("titles/", views.Titles.as_view(), name="titles")
 ]

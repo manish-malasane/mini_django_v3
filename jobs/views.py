@@ -4,6 +4,7 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404
 from jobs.models import Portal, JobDescription, Applicant, JobTitle
 from django.views import View
+from django.db.utils import IntegrityError
 
 # Create your views here.
 
@@ -66,14 +67,16 @@ def get_titles(request):
 
 
 class Portals(View):
-    def get(self, request):
+    @staticmethod
+    def get(request):
         portals = []
         obj = Portal.objects.order_by("id")
         for i in obj:
             portals.append(i.name)
         return render(request, "jobs/portals.html", {"portal_obj": portals})
 
-    def post(self, request):
+    @staticmethod
+    def post(request):
         data = request.body
         data = json.loads(data)
         portal_name = data.get("name")
@@ -86,7 +89,8 @@ class Portals(View):
         else:
             return HttpResponse("Portal is already available")
 
-    def put(self, request):
+    @staticmethod
+    def put(request):
         data = request.body
         data = json.loads(data)
         portal_name = data.get("name")
@@ -100,7 +104,8 @@ class Portals(View):
             portal = portal_.update(**data)
             return HttpResponse("Portal Updated Successfully")
 
-    def patch(self, request):
+    @staticmethod
+    def patch(request):
         data = request.body
         data = json.loads(data)
         portal_name = data.get("name")
@@ -114,7 +119,8 @@ class Portals(View):
             portal = portal_.update(**data)
             return HttpResponse("Portal Updated Successfully")
 
-    def delete(self, request):
+    @staticmethod
+    def delete(request):
         data = request.body
         data = json.loads(data)
         portal_name = data.get("name")
@@ -123,3 +129,53 @@ class Portals(View):
         if portal_:
             portal_.delete()
             return HttpResponse("Portal Deleted Successfully")
+
+
+class Titles(View):
+    @staticmethod
+    def get(request):
+        titles = []
+        objs = JobTitle.objects.order_by("id")
+        for obj in objs:
+            titles.append(obj.title)
+        return render(request, "jobs/titles.html", {"titles_obj": titles})
+
+    @staticmethod
+    def post(request):
+        data = request.body
+        data = json.loads(data)
+        try:
+            portal_data = data.get("portal")
+            portal_name = portal_data.get("name")
+            portal = Portal.objects.filter(name=portal_name)
+            if portal:
+                portal = portal[0]
+            else:
+                portal = Portal.objects.create(**portal_data)
+                portal.save()
+
+            jd_data = data.get("job_description")
+            jd_role = jd_data.get("role")
+            jd = JobDescription.objects.filter(role=jd_role)
+
+            if jd:
+                jd = jd[0]
+            else:
+                jd = JobDescription.objects.create(**jd_data)
+                jd.save()
+
+            data["portal"] = portal
+            data["job_description"] = jd
+
+            job_title = JobTitle.objects.create(**data)
+            job_title.save()
+            job_titles = JobTitle.objects.all()
+
+            return render(request, "jobs/titles_.html", {"obj": job_titles})
+        except IntegrityError as ex:
+            return HttpResponse(F"eRROr {ex}")
+
+
+
+
+
