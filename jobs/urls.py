@@ -25,4 +25,5 @@ urlpatterns = [
         "applicant/<int:id_>", views.get_applicant_details, name="get_applicant_details"
     ),
     path("job_titles/", views.get_titles, name="job_titles"),
+    path("portals/", views.Portals.as_view(), name="portals"),
 ]

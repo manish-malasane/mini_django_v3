@@ -1,7 +1,9 @@
+import json
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404
 from jobs.models import Portal, JobDescription, Applicant, JobTitle
+from django.views import View
 
 # Create your views here.
 
@@ -61,3 +63,63 @@ def get_titles(request):
     for i in result:
         titles.append(i.title)
     return JsonResponse(titles, safe=False)
+
+
+class Portals(View):
+    def get(self, request):
+        portals = []
+        obj = Portal.objects.order_by("id")
+        for i in obj:
+            portals.append(i.name)
+        return render(request, "jobs/portals.html", {"portal_obj": portals})
+
+    def post(self, request):
+        data = request.body
+        data = json.loads(data)
+        portal_name = data.get("name")
+        portal = Portal.objects.filter(name=portal_name)
+
+        if not portal:
+            portal = Portal.objects.create(**data)
+            portal.save()
+            return HttpResponse("Portal Inserted Successfully")
+        else:
+            return HttpResponse("Portal is already available")
+
+    def put(self, request):
+        data = request.body
+        data = json.loads(data)
+        portal_name = data.get("name")
+        portal_ = Portal.objects.filter(name=portal_name)
+
+        if not portal_:
+            portal = Portal.objects.create(**data)
+            portal.save()
+            return HttpResponse("Portal Created Successfully")
+        else:
+            portal = portal_.update(**data)
+            return HttpResponse("Portal Updated Successfully")
+
+    def patch(self, request):
+        data = request.body
+        data = json.loads(data)
+        portal_name = data.get("name")
+        portal_ = Portal.objects.filter(name=portal_name)
+
+        if not portal_:
+            portal = Portal.objects.create(**data)
+            portal.save()
+            return HttpResponse("Portal Created Successfully")
+        else:
+            portal = portal_.update(**data)
+            return HttpResponse("Portal Updated Successfully")
+
+    def delete(self, request):
+        data = request.body
+        data = json.loads(data)
+        portal_name = data.get("name")
+        portal_ = Portal.objects.filter(name=portal_name)
+
+        if portal_:
+            portal_.delete()
+            return HttpResponse("Portal Deleted Successfully")
