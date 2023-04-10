@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% for applicant in object_list %}
+<li> {{applicant.name}} ({{applicant.applied_for}})</li>
+{% endfor %}
+</body>
+</html>

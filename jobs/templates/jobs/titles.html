@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JOB Titles</title>
+</head>
+<body>
+<h3>Job Titles</h3>
+{% if get_titles %}
+{% for title in get_titles %}
+<li>{{title}}</li>
+{% endfor %}
+{% else %}
+<h4>There is no title available right now</h4>
+{% endif %}
+
+{% for title in titles %}
+<li>{{title}}</li>
+{% endfor %}
+
+</body>
+</html>

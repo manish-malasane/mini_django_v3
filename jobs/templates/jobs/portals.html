@@ -6,8 +6,13 @@
 </head>
 <body>
 <h3>Job Portals</h3>
+{% if portal_obj %}
 {% for portal in portal_obj %}
 <li>{{portal}}</li>
 {% endfor %}
+{% else %}
+<h4>There is no portal available right now</h4>
+{% endif %}
+
 </body>
 </html>

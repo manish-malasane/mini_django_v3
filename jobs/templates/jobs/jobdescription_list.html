@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% for jd in object_list %}
+<li> {{jd.role}} ({{jd.description_text}})</li>
+{% endfor %}
+</body>
+</html>
