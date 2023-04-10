@@ -21,4 +21,5 @@
     - admin.py
     - urls.py
     - models.py
+    - tests.py
     - views.py
