@@ -23,7 +23,7 @@ class JobDescription(models.Model):
 
 class JobTitle(models.Model):
     title = models.CharField(max_length=250)
-    last_updated = models.IntegerField(default=timezone.now)
+    last_updated = models.DateTimeField(default=timezone.now)
 
     # one-to-one relationship (here job title description is unique against each  job title)
     job_description = models.OneToOneField(JobDescription, on_delete=models.CASCADE)
@@ -40,4 +40,7 @@ class Applicant(models.Model):
 
     # ONE-TO-MANY relationship (here applicant is applied for multiple job titles)
     applied_for = models.ForeignKey(JobTitle, on_delete=models.CASCADE)
-    last_updated = models.DateTimeField(default=timezone.now)
+    cover_letter = models.CharField(max_length=500)
+
+    def __str__(self):
+        return self.name
