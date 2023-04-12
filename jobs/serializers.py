@@ -3,7 +3,6 @@ from jobs.models import Portal, JobTitle, JobDescription, Applicant
 from django.utils import timezone
 
 
-
 class PortalSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=50)
     description = serializers.CharField(max_length=200)
