@@ -5,7 +5,7 @@ from jobs.serializers import (
     JobTitleSerializer,
     JobDescriptionSerializer,
 )
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 import json
 from rest_framework.parsers import JSONParser
 
@@ -20,6 +20,25 @@ def portal_list(request):
         # from serialized object pull out only the data by using `data` attribute on serialized object
         # Whenever our data is in non-dict format we have pass addition arg called safe=False
         return JsonResponse(obj.data, safe=False)
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+
+        serialized_portal = PortalSerializer(data=data)
+        if serialized_portal.is_valid():
+            Portal.objects.create(**data)
+
+        return JsonResponse(serialized_portal.data)
+
+    if request.method == "DELETE":
+        data = json.loads(request.body)
+
+        serialized_portal = PortalSerializer(data=data)
+        if serialized_portal.is_valid():
+            obj = Portal.objects.filter(**data)
+            obj.delete()
+
+        return JsonResponse(serialized_portal.data)
 
 
 def applicant_list(request):
@@ -36,13 +55,26 @@ def applicant_list(request):
         # print(obj.errors)
         return JsonResponse(obj.data, safe=False)
 
-    if request.method == "POST":
+    if request.method == "POST":  # Not completed yet
         # 1st way
-        using_json_module = json.loads(request.body)
+        data = json.loads(request.body)
 
-        # 2nd way
-        parser = JSONParser
-        data = parser.parse(request)
+        # # 2nd way
+        # parser = JSONParser()
+        # data = parser.parse(request)
+        applied_for = data.get("applied_for")  # jobtitle relation
+        obj = JobTitleSerializer(data=applied_for)
+
+        foo = None
+        if obj.is_valid():
+            foo = obj.save()
+
+        serialized_applicant = ApplicantSerializer(data=data)
+        if serialized_applicant.is_valid():
+            data["applied_for"] = foo
+            Applicant.objects.create(**data)
+
+        return JsonResponse(serialized_applicant.data)
 
 
 def job_title_list(request):
@@ -52,6 +84,48 @@ def job_title_list(request):
         obj = JobTitleSerializer(job_titles, many=True)
         return JsonResponse(obj.data, safe=False)
 
+    if request.method == "POST":
+        # 1st way
+        data = json.loads(request.body)
+
+        # # 2nd way
+        # parser = JSONParser()
+        # data = parser.parse(request)
+        jd_data = data.get("job_description")
+        serialized_jd = JobDescriptionSerializer(data=jd_data)
+
+        jd_obj = None
+        if serialized_jd.is_valid():
+            jd_obj = serialized_jd.save()
+
+        portal_obj = None
+        portal_data = data.get("portal")
+        serialized_portal = PortalSerializer(data=portal_data)
+
+        if serialized_portal.is_valid():
+            portal_obj = serialized_portal.save()
+
+        serialized_jt = JobTitleSerializer(data=data)
+        if serialized_jt.is_valid():
+            data["job_description"] = jd_obj
+            data["portal"] = portal_obj
+            JobTitle.objects.create(**data)
+
+        return JsonResponse(serialized_jt.data, safe=False)
+
+    if request.method == "DELETE":
+        parser = JSONParser()
+        data = parser.parse(request)
+
+        serialized_jt = JobTitleSerializer(data=data)
+        if serialized_jt.is_valid():
+            obj = JobTitle.objects.get(**data)
+            obj.delete()
+
+            # pass id in postman like job_description_id, portal_id
+
+        return JsonResponse(serialized_jt.data)
+
 
 def job_description_list(request):
     if request.method == "GET":
@@ -59,3 +133,24 @@ def job_description_list(request):
 
         obj = JobDescriptionSerializer(job_descriptions, many=True)
         return JsonResponse(obj.data, safe=False)
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+
+        serialized_jd = JobDescriptionSerializer(data=data)
+
+        if serialized_jd.is_valid():
+            JobDescription.objects.create(**data)
+
+        return JsonResponse(serialized_jd.data)
+
+    if request.method == "DELETE":
+        data = json.loads(request.body)
+
+        serialized_jd = JobDescriptionSerializer(data=data)
+
+        if serialized_jd.is_valid():
+            obj = JobDescription.objects.filter(**data)
+            obj.delete()
+
+        return JsonResponse(serialized_jd.data)
