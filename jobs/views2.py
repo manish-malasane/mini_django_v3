@@ -34,6 +34,7 @@ class ApplicantDelete(DeleteView):
 
 # Generic views for portal table
 
+
 class PortalList(ListView):
     model = Portal
 
@@ -63,6 +64,7 @@ class PortalDelete(DeleteView):
 
 # Generic views for job title table
 
+
 class JobTitleList(ListView):
     model = JobTitle
 
@@ -91,6 +93,7 @@ class JobTitleDelete(DeleteView):
 
 
 # Generic views for job description table
+
 
 class JobDescriptionList(ListView):
     model = JobDescription
