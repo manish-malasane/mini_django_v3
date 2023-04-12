@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from jobs.models import Portal
+from .serializers import PortalSerializer
+from rest_framework.parsers import JSONParser
 
 
 class Portals(APIView):
@@ -16,8 +18,33 @@ class Portals(APIView):
 
     def post(self, request):
         data = json.loads(request.body)
-        portal = Portal.objects.create(**data)
-        return Response("portal created")
+
+        serialized_portal = PortalSerializer(data=data)
+
+        if serialized_portal.is_valid():
+            obj = Portal.objects.create(**data)
+            resp = {
+                "name": obj.name,
+                "description": obj.description,
+                "message": f"{obj} inserted successfully"
+            }
+
+            return Response(resp)
+
+    def delete(self, request):
+        parser = JSONParser()
+        data = parser.parse(request)
+
+        serialized_portal = PortalSerializer(data=data)
+
+        if serialized_portal.is_valid():
+            obj = Portal.objects.filter(**data)
+            obj.delete()
+
+            resp = {
+                "message": f"{obj.name} - portal deleted successfully"
+            }
+            return Response(resp)
 
 
 class UserList(APIView):
