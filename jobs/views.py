@@ -152,7 +152,7 @@ class Titles(View):
     @staticmethod
     def get(request):
         titles = []
-        objs = JobTitle.objects.order_by('id')
+        objs = JobTitle.objects.order_by("id")
 
         for obj in objs:
             titles.append(obj.title)
@@ -224,5 +224,3 @@ class Titles(View):
         job_titles = JobTitle.objects.all()
 
         return render(request, "jobs/patch_title.html", {"patch": job_titles})
-
-
