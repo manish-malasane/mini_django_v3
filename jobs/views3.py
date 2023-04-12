@@ -25,6 +25,9 @@ class UserList(APIView):
         users = User.objects.all()
         final = dict()
         for user in users:
-            final[user.id] = {"id": user.id, "username": user.username, "email": user.email}
+            final[user.id] = {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+            }
         return Response(final)
-
