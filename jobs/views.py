@@ -124,6 +124,7 @@ class Portals(View):
             return HttpResponse("Portal Deleted Successfully")
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class JobDesc(View):
     @staticmethod
     def get(request):
@@ -148,6 +149,7 @@ class JobDesc(View):
             return HttpResponse("JD is already available")
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class Titles(View):
     @staticmethod
     def get(request):
@@ -181,11 +183,13 @@ class Titles(View):
         else:
             jd = jd[0]
 
-        data["portal"] = portal
-        data["job_description"] = jd
+        job_title = data.get("title")
+        jt = JobTitle.objects.filter(title=job_title)
+        if not jt:
+            data["portal"] = portal
+            data["job_description"] = jd
+            JobTitle.objects.create(**data)
 
-        job_title = JobTitle.objects.create(**data)
-        job_title.save()
         job_titles = JobTitle.objects.all()
 
         return render(request, "jobs/titles.html", {"titles": job_titles})
